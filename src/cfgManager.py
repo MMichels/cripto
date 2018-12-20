@@ -1,18 +1,24 @@
 from configparser import ConfigParser
+from os.path import abspath
 
 from cripto import Cripto
 
 
 class Config:
-    def __init__(self, chave: str = None, diretorio: str = '../proj.cfg'):
+    def __init__(self, chave: str = None, arquivo: str = '../proj.cfg'):
+        """
+        abre um objeto gerenciador de arquivos de configuração com criptogradia
+        :param chave: chave do arquivo a ser aberto
+        :param arquivo: diretorio do arquivo
+        """
         self.cfg = ConfigParser()
         if chave is not None:
             self.cripto = Cripto(bytes(chave.encode('utf-8')))
-            self.dir_arquivo = diretorio
+            self.dir_arquivo = arquivo
             try:
                 self.cfg.read(self.dir_arquivo)
-            except:
-                pass
+            except Exception as e:
+                raise Exception('Não foi possivel carregar o arquivo ', abspath(arquivo), 'Causa:', e)
 
     def open(self, diretorio: str):
         self.cfg.read(diretorio)
@@ -48,7 +54,7 @@ class Config:
 
     def get_db_passwd(self):
         passwd = self.cfg['DATABASE']['Password']
-        return self.cripto.decriptografar(passwd)[:-1:]
+        return self.cripto.decriptografar(passwd)
 
     def set_db_url(self, value: str):
         url = self.cripto.criptografar(value)
