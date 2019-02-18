@@ -1,11 +1,8 @@
-import mysql.connector as mariadb
-
 import tkinter.ttk as ttk
 from io import TextIOWrapper
 from tkinter import *
 import os.path
 
-from mysql.connector import ProgrammingError
 
 import avisos
 import tela_support
@@ -72,6 +69,10 @@ class Tela:
 
         self.txtDbPort = Entry(self.abas_db)
         self.txtDbPort.place(relx=0.542, rely=0.372, height=24, relwidth=0.111)
+
+        self.boxDriver = ttk.Combobox(self.abas_db, values=('MySQL', 'PostgreSQL'))
+        self.boxDriver.current(0)
+        self.boxDriver.place(relx=0.660, rely=0.372, height=24, relwidth=0.120)
 
         self.txtDbUser = Entry(self.abas_db)
         self.txtDbUser.place(relx=0.153, rely=0.442, height=24, relwidth=0.311)
@@ -150,6 +151,7 @@ class Tela:
         self.cfgM.set_db_user(self.txtDbUser.get())
         self.cfgM.set_db_passwd(self.txtDbSenha.get())
         self.cfgM.set_db_name(self.txtDbBase.get())
+        self.cfgM.set_db_driver(self.boxDriver.get())
 
     def ld_cfg(self):
         import cryptography.fernet
@@ -165,23 +167,38 @@ class Tela:
             self.txtDbUser.insert(0, self.cfgM.get_db_user())
             self.txtDbSenha.insert(0, self.cfgM.get_db_passwd())
             self.txtDbBase.insert(0, self.cfgM.get_db_name())
+            self.boxDriver.set(self.cfgM.get_db_driver())
         except cryptography.fernet.InvalidToken:
             self.lblStatus['text'] = 'Chave invalida'
+        except KeyError:
+            pass
 
     def tstCon(self):
         end = self.txtDbUrl.get()
         port = int(self.txtDbPort.get())
         user = self.txtDbUser.get()
         senha = self.txtDbSenha.get()
-        settings = {'user': user, 'password': senha, 'host': end, 'port': port, 'database': 'mysql'}
-        try:
-            con = mariadb.connect(**settings)
-            if con.is_connected():
-                self.lblStatus['text'] = 'Conexão realizada com sucesso'
-            else:
-                self.lblStatus['text'] = 'Falha ao conectar'
-        except ProgrammingError as e:
-            self.lblStatus['text'] = e
+        settings = {'user': user, 'password': senha, 'host': end, 'port': port, 'database': self.txtDbBase.get()}
+        if self.boxDriver.get() == 'MySQL':
+            import mysql.connector as mariadb
+            from mysql.connector import ProgrammingError
+            try:
+                con = mariadb.connect(**settings)
+                if con.is_connected():
+                    self.lblStatus['text'] = 'Conexão realizada com sucesso'
+                else:
+                    self.lblStatus['text'] = 'Falha ao conectar'
+            except ProgrammingError as e:
+                self.lblStatus['text'] = e
+        elif self.boxDriver.get() == 'PostgreSQL':
+            import psycopg2
+            try:
+                con = psycopg2.connect(**settings)
+                cursor = con.cursor()
+                self.lblStatus['text'] = 'Conectado'
+            except Exception as e:
+                self.lblStatus['text'] = e
+
 
 
 if __name__ == '__main__':

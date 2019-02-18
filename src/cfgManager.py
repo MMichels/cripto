@@ -42,7 +42,7 @@ class Config:
 
     def get_db_user(self):
         user = self.cfg['DATABASE']['User']
-        return self.cripto.decriptografar(user)
+        return self.cripto.descriptografar(user)
 
     def set_db_passwd(self, value: str):
         passwd = self.cripto.criptografar(value)
@@ -54,7 +54,7 @@ class Config:
 
     def get_db_passwd(self):
         passwd = self.cfg['DATABASE']['Password']
-        return self.cripto.decriptografar(passwd)
+        return self.cripto.descriptografar(passwd)
 
     def set_db_url(self, value: str):
         url = self.cripto.criptografar(value)
@@ -66,7 +66,7 @@ class Config:
 
     def get_db_url(self):
         url = self.cfg['DATABASE']['url']
-        return self.cripto.decriptografar(url)
+        return self.cripto.descriptografar(url)
 
     def set_db_name(self, value: str):
         name = self.cripto.criptografar(value)
@@ -78,7 +78,7 @@ class Config:
 
     def get_db_name(self):
         name = self.cfg['DATABASE']['Name']
-        return self.cripto.decriptografar(name)
+        return self.cripto.descriptografar(name)
 
     def set_db_port(self, value: int):
         port = self.cripto.criptografar(str(value))
@@ -90,4 +90,16 @@ class Config:
 
     def get_db_port(self):
         port = self.cfg['DATABASE']['Port']
-        return int(self.cripto.decriptografar(port))
+        return int(self.cripto.descriptografar(port))
+
+    def set_db_driver(self, value: 'str'):
+        driver = self.cripto.criptografar(value)
+        try:
+            self.cfg['DATABASE']['Driver'] = driver
+        except KeyError:
+            self.cfg.add_section('DATABASE')
+            self.cfg.set('DATABASE', 'Driver', driver)
+
+    def get_db_driver(self):
+        driver = self.cfg['DATABASE']['Driver']
+        return self.cripto.descriptografar(driver)

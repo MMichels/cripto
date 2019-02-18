@@ -9,7 +9,7 @@ class Cripto:
         texto = self.cripto.encrypt(bytes(texto.encode('utf-8')))
         return str(texto)[2:-1]
 
-    def decriptografar(self, texto: str):
+    def descriptografar(self, texto: str):
         texto = self.cripto.decrypt(bytes(texto.encode('utf-8')))
         return str(texto)[2:-1]
 
