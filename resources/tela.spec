@@ -1,12 +1,15 @@
 # -*- mode: python -*-
+import os
 
+FILECHOSER_PATH = os.path.abspath('../../filechoser/fileman.py')  # Subistituir pelo diretorio da dependencia filechoser
+TKPOP_PATH = os.path.abspath('../../tkpop/avisos.py')  # Subistituir pelo diretorio da dependencia tkpop
 block_cipher = None
 
-a = Analysis(['..\\src\\tela.py'],
-             pathex=['D:\\Mateus\\Mega\\Python\\util\\cripto'],
+a = Analysis(['../src/tela.py'],
+             pathex=['../'],
              binaries=[],
-             datas=[('D:\\Mateus\\Mega\\Python\\util\\filechoser\\fileman.py', '.'),
-                    ('D:\\Mateus\\Mega\\Python\\util\\tkpop\\avisos.py', '.')],
+             datas=[(FILECHOSER_PATH, '.'),
+                    (TKPOP_PATH, '.')],
              hiddenimports=['cryptography', 'tkinter.filedialog', 'mysql', 'psycopg2'],
              hookspath=[],
              runtime_hooks=[],
